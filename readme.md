@@ -42,9 +42,9 @@ Foram simulados quatro cenários para análise de sensibilidade:
    pip install gurobipy pandas matplotlib
    ```
 3. É necessário possuir uma licença válida do Gurobi configurada no ambiente.
-4. Execute o script principal do modelo (ajuste o nome do arquivo conforme a estrutura do repositório):
+4. Execute o script principal do modelo:
    ```bash
-   python main.py
+   Wmecai2026_Trabalho_Laranja.ipynb
    ```
 
 ## Autores
