@@ -8,18 +8,19 @@
 \makeatletter
 \renewcommand\@fnsymbol[1]{\ifcase#1\or 1\or 2\or 3\fi}
 \makeatother
-
+\usepackage[hidelinks]{hyperref}
+\usepackage{float}
 
 \title{Otimização da Destinação da Produção de Laranja entre Mercado Interno e Indústria de Suco Considerando Sazonalidade de Preços e Janelas Operacionais de Colheita Utilizando Programação Linear e GurobiPy}
 \author{
-Alexander Ferreira\thanks{ferreira.alexander@aol.com}, 
-Leandro de Andrade\thanks{andradeleandro@usp.br}, 
-Afonso Paiva Neto\thanks{apneto@icmc.usp.br}\\
+Alexander Ferreira\thanks{alexferrei198170@gmail.com}, 
+Leandro de Andrade\thanks{andradeleandro@usp.br} 
+\\
 ICMC-USP
 }
 
 \date{}
-
+\setlength{\parindent}{0pt}
 \begin{document}
 
 \criartitulo
@@ -29,16 +30,33 @@ O Brasil é o maior produtor mundial de laranja, sendo o estado de São Paulo re
 Este trabalho apresenta um modelo de Programação Linear para otimizar a destinação da produção de laranja entre mercado interno e indústria de suco. A formulação considera a sazonalidade dos preços e as janelas operacionais de colheita, respeitando a perecibilidade da fruta. O modelo foi implementado em Python utilizando GurobiPy e validado por meio de cenários simulados. Os resultados demonstram que o preço pago pela indústria é o fator mais relevante e que a flexibilidade operacional da colheita possui valor econômico mensurável, permitindo ao produtor maximizar sua receita e transformar decisões empíricas em quantitativas.
 
 \section{Problema de Pesquisa}
-Um produtor da região de Ribeirão Preto possui produção prevista de 100.000 toneladas de laranja no segundo semestre de 2025. A produção pode ser destinada ao mercado interno (fruta in natura) ou à indústria de suco. A colheita pode ser postergada até 10 dias para o mercado interno e até 20 dias para a indústria. O objetivo é maximizar a receita total da propriedade.
+Um produtor da região de Ribeirão Preto possui uma produção prevista de 100.000 toneladas de laranja durante o segundo semestre de 2025\cite{fundecitrus2026safra}. \\\vspace{0.cm}
+
+A produção pode ser destinada para:
+
+\begin{itemize}
+    \item Mercado Interno (fruta \textit{in natura});
+    \item Indústria de Suco.
+\end{itemize}
+
+A laranja não pode ser armazenada após a colheita por longos períodos devido à sua elevada perecibilidade. Entretanto, a colheita pode ser postergada no pomar dentro dos seguintes limites:
+\begin{itemize}
+    \item Mercado Interno: até 10 dias;
+    \item Indústria: até 20 dias.
+\end{itemize}
+
+O objetivo é determinar a melhor estratégia de destinação da produção para maximizar a receita da propriedade, decidindo quanto vender para o mercado, quanto para a indústria, e quanto postergar para os meses subsequentes.
 
 \section{Formulação Matemática}
-\subsection{Função Objetivo}
+
+\textbf{Função Objetivo}
 \begin{equation}
 Z = \sum_{t \in T} P_{M_t} M_t + \sum_{t \in T} P_{I_t} I_t
 \end{equation}
 onde $M_t$ é a quantidade destinada ao mercado interno e $I_t$ à indústria no mês $t$.
 
-\subsection{Restrições}
+\vspace{0.2cm}
+\textbf{Restrições}
 \begin{itemize}
     \item Balanço da produção mensal: $M_t + I_t + T_{M_t} + T_{I_t} = Q_t + T_{M_{t-1}} + T_{I_{t-1}}$
     \item Postergação máxima: $T_{M_t} \leq 0.20 Q_t$, $T_{I_t} \leq 0.40 Q_t$
@@ -47,13 +65,16 @@ onde $M_t$ é a quantidade destinada ao mercado interno e $I_t$ à indústria no
     \item Não negatividade: $M_t, I_t, T_{M_t}, T_{I_t} \geq 0$
 \end{itemize}
 
-\section{Implementação Computacional}
-O modelo foi implementado em Python utilizando GurobiPy, com apoio das bibliotecas \texttt{pandas} e \texttt{matplotlib}. O método de solução empregado foi o algoritmo Simplex.
+
 
 \section{Resultados}
-Foram simulados quatro cenários:
+O modelo foi implementado em Python utilizando GurobiPy, com apoio das bibliotecas \texttt{pandas} e \texttt{matplotlib}. O método de solução empregado foi o algoritmo Simplex.
 
-\begin{table}[h]
+
+Foram avaliados quatro cenários: O Cenário Base representa as condições originais de preços e restrições operacionais, impíricas do produtor. O Cenário Mercado -15\% simula uma redução dos preços da fruta destinada ao mercado \textit{in natura}. O Cenário Indústria +20\% considera um aumento dos preços pagos pela indústria de suco. Por fim, o Cenário Janela Reduzida reduz em 50\% a capacidade de postergação da colheita, representando uma menor flexibilidade operacional do produtor.
+
+
+\begin{table}[H]
 \centering
 \caption{Resultados dos cenários simulados}
 \begin{tabular}{lcccc}
@@ -68,21 +89,12 @@ Janela Reduzida  & 189,65 & 60.000 & 40.000 & -1,34 \\
 \end{tabular}
 \end{table}
 
-\noindent As simulações evidenciam dinâmicas cruciais:
+\vspace{0.2cm}
 
-\noindent A flexibilidade da colheita tem valor econômico mensurável.  
-No Cenário 4 (Janela Reduzida), a receita cai para R\$ 189,65 milhões, uma perda de R\$ 2,59 milhões (-1,34\%) em relação ao Base. Isso mostra que reduzir as janelas de postergação limita a capacidade de capturar preços melhores.
+\noindent Os resultados indicam elevada sensibilidade da receita às condições de mercado. O aumento dos preços industriais gerou a maior receita (R\$ 206,09 milhões), direcionando 76.000 t para a indústria. Em contrapartida, a redução dos preços do mercado interno diminuiu a receita para R\$ 173,25 milhões. A restrição das janelas operacionais também impactou negativamente o resultado, reduzindo a receita para R\$ 189,65 milhões. Esses resultados evidenciam a importância do acompanhamento de preços e da flexibilidade operacional na maximização da rentabilidade.
 
-\noindent A rentabilidade é altamente sensível ao preço industrial. 
-No Cenário 3 (Indústria +20\%), a receita sobe para R\$ 206,09 milhões, um ganho de R\$ 13,85 milhões (+7,20\%) sobre o Base. O volume destinado à indústria aumenta para 76.000 t, evidenciando que esse canal se torna prioritário quando valorizado.
 
-\noindent O mercado interno é vulnerável a quedas de preço.  
-No Cenário 2 (Mercado -15\%), a receita despenca para R\$ 173,25 milhões, uma redução de R\$ 19 milhões (-9,87\%) em relação ao Base. O volume destinado ao mercado cai para 48.000 t, enquanto a indústria absorve 52.000 t.
-
-\noindent O modelo otimizado supera a estratégia tradicional.  
-A estratégia empírica de colher e vender imediatamente gera R\$ 197,75 milhões, mas não respeita restrições contratuais e operacionais. Já o modelo otimizado, mesmo com restrições, identifica alocações mais eficientes e cenários de maior ganho.
-
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{grafico.png}
 \caption{Receita máxima por cenário}
@@ -90,29 +102,24 @@ A estratégia empírica de colher e vender imediatamente gera R\$ 197,75 milhõe
 \end{figure}
 
 
-\noindent Os resultados mostram que o preço pago pela indústria é o fator mais relevante. A flexibilidade operacional da colheita possui valor econômico mensurável, e a redução das janelas de colheita gera perda aproximada de R\$ 13,85 milhões, com um ganho puro de 7,20\% de rentabilidade ao produtor, comparando o cenário Base e o cenário Indústia +20\%). 
-
-
 \section{Conclusão}
 
 O conjunto dos cenários evidenciou que a receita citrícola é sensível às variações de mercado e às restrições operacionais, e o modelo de Programação Linear proposto, resolvido pelo algoritmo Simplex, mostrou-se capaz de representar de forma realista o processo decisório, com a perecibilidade da fruta e as janelas de postergação no pomar incorporadas de forma explícita, oferecendo suporte quantitativo à estratégia ótima de comercialização.
 
 
+O código-fonte, os dados de entrada e os experimentos computacionais desenvolvidos neste trabalho estão disponíveis em:
+
+\begin{center} \href{https://github.com/alexferrei198170/WMECAI2026} {\textbf{Repositório GitHub (Código-fonte)}} \end{center} \begin{center} \href{https://colab.research.google.com/drive/1HIxed896Ux7tUNe0tLh2mcHkC6dtD6_T} {\textbf{Notebook Google Colab (Reprodução dos Resultados)}} \end{center}
 
 
+\newpage
 \section*{Agradecimentos}
 Agradeço ao corpo docente do MECAI-USP e às instituições IBGE, Fundecitrus e CEPEA/ESALQ-USP pelo fornecimento dos dados utilizados.
 
-\begin{thebibliography}{00}
-\bibitem{boldrini} J. L. Boldrini et al. Álgebra Linear e Aplicações, Harbra, 1984.
-\bibitem{cuminato} J. A. Cuminato and V. Ruas. Unification of distance inequalities, Comp. Appl. Math., 2014.
-\bibitem{jafelice} R. M. Jafelice et al. Study of the dynamics of HIV, Comp. Appl. Math., 2014.
-\bibitem{santos} I. L. D. Santos e G. N. Silva. Controle ótimo em escalas temporais, SBMAC, 2013.
-\bibitem{cepea} CEPEA – Centro de Estudos Avançados em Economia Aplicada. 
-Indicadores agropecuários: Citros, 2026.
-\bibitem{fundecitrus} Fundecitrus. Inventário de árvores de citros do cinturão citrícola de São Paulo e triângulo/sudoeste mineiro. 
-Technical report, Fundo de Defesa da Citricultura, Araraquara, SP, 2025. 
-Acessado em: 16 set. 2026.
-\end{thebibliography}
+% Referências Bibliográficas
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{referencias}
+
 \end{document}
 
